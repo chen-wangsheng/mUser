@@ -10,7 +10,7 @@ import tk.mybatis.spring.annotation.MapperScan;
  * @Description: 用户模块启动类
  **/
 @SpringBootApplication
-@MapperScan("com.chinasoft.user")
+@MapperScan("com.chinasoft.user.dao")
 public class UserApplication {
 
     public static void main(String[] args) {

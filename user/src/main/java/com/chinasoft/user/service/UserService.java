@@ -1,10 +1,8 @@
 package com.chinasoft.user.service;
 
-import com.chinasoft.common.dto.UserDTO;
 import com.chinasoft.common.utils.Result;
-import com.chinasoft.common.vo.UserUpdateVO;
-
-import java.util.List;
+import com.chinasoft.user.entity.vo.UserQueryVO;
+import com.chinasoft.user.entity.vo.UserUpdateVO;
 
 public interface UserService {
 
@@ -31,7 +29,10 @@ public interface UserService {
 
     /**
      * 查询用户列表
-     * @return
+     * @param pageNum
+     * @param pageSize
+     * @param userQueryVO
+     * @return result
      */
-    List<UserDTO> getUserList();
+    Result getUserPageList(Integer pageNum, Integer pageSize, UserQueryVO userQueryVO);
 }

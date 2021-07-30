@@ -1,11 +1,12 @@
 package com.chinasoft.user.controller;
 
-import com.chinasoft.common.dto.UserDTO;
 import com.chinasoft.common.utils.Result;
-import com.chinasoft.common.vo.UserUpdateVO;
-import com.chinasoft.user.entity.User;
+import com.chinasoft.user.entity.vo.UserQueryVO;
+import com.chinasoft.user.entity.vo.UserUpdateVO;
 import com.chinasoft.user.service.UserService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * @Author: VanceChen
@@ -57,9 +56,16 @@ public class UserController {
     }
 
     @ApiOperation("查询用户列表")
-    @GetMapping("/getUserList")
-    public Result getUserList() {
-        List<UserDTO> list = userService.getUserList();
-        return Result.ok().data("items", list);
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNum", value = "页码", required = true,dataType = "int", defaultValue = "1"),
+            @ApiImplicitParam(name = "pageSize", value = "每页数", required = true,dataType="int", defaultValue = "10")
+    })
+    @PostMapping("/getUserPageList/{pageNum}/{pageSize}")
+    public Result getUserPageList(
+            @PathVariable("pageNum") Integer pageNum,
+            @PathVariable("pageSize") Integer pageSize,
+            @RequestBody UserQueryVO userQueryVO) {
+        Result list = userService.getUserPageList(pageNum, pageSize, userQueryVO);
+        return list;
     }
 }

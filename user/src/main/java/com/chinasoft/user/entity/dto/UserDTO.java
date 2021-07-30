@@ -1,4 +1,4 @@
-package com.chinasoft.common.vo;
+package com.chinasoft.user.entity.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -10,14 +10,14 @@ import java.util.Date;
 
 /**
  * @Author: VanceChen
- * @Date: 2021/7/30 11:30
+ * @Date: 2021/7/30 11:38
  * @Description: TODO
  **/
 @Data
 @ApiModel(value="EduVideo对象", description="课程视频")
-public class UserUpdateVO implements Serializable {
+public class UserDTO implements Serializable {
 
-    private static final long serialVersionUID = 3108507741216646272L;
+    private static final long serialVersionUID = 4738405251460060638L;
 
     @Id
     private Integer id;
@@ -25,8 +25,17 @@ public class UserUpdateVO implements Serializable {
     @ApiModelProperty(value = "手机号")
     private String mobile;
 
-    @ApiModelProperty(value = "密码")
-    private String pwd;
+    @ApiModelProperty(value = "最后登录时间")
+    private Date lastLoginTime;
+
+    @ApiModelProperty(value = "最后登录IP")
+    private String lastLoginIp;
+
+    @ApiModelProperty(value = "最后登录设备")
+    private String lastLoginEqpt;
+
+    @ApiModelProperty(value = "最后累计登录失败次数")
+    private Integer lastFailedTimes;
 
     @ApiModelProperty(value = "昵称")
     private String nickname;
@@ -40,5 +49,7 @@ public class UserUpdateVO implements Serializable {
     @ApiModelProperty(value = "性别(F女、M男、N未知)")
     private String gender;
 
+    @ApiModelProperty(value = "状态（VALID/FROZEN/DEL)")
+    private String status;
 
 }

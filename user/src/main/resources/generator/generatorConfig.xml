@@ -13,7 +13,7 @@
 
         <!-- 配置 GeneralDAO -->
         <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
-            <property name="mappers" value="com.chinasoft.user.dao.BaseDao"/>
+            <property name="mappers" value="com.chinasoft.user.base.BaseDao"/>
         </plugin>
 
         <!-- 配置数据库连接 -->
@@ -26,7 +26,7 @@
         <javaModelGenerator targetPackage="com.chinasoft.user.entity" targetProject="src/main/java"/>
 
         <!-- 配置 XML 存放路径 -->
-        <sqlMapGenerator targetPackage="/" targetProject="src/main/resources/mappers"/>
+        <sqlMapGenerator targetPackage="/" targetProject="src/main/resources/mapper"/>
 
         <!-- 配置 DAO 存放路径 -->
         <javaClientGenerator targetPackage="com.chinasoft.user.dao" targetProject="src/main/java" type="XMLMAPPER"/>
