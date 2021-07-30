@@ -1,0 +1,28 @@
+server:
+  port: 7080
+
+spring:
+  application:
+    # 服务名
+    name: web-user
+  # 环境设置：dev、test、prod
+  profiles:
+    active: dev
+  #返回json的全局时间格式
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  datasource:
+    druid:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/db_hello?characterEncoding=utf-8
+      username: root
+      password: root
+
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: com.chinasoft.entity
+
+logging:
+  level:
+    com.chinasoft.fmmall: debug
