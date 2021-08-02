@@ -1,9 +1,12 @@
 package com.chinasoft.common.utils;
 
+import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,6 +15,7 @@ import java.util.Map;
  * @Author vanceChen
  */
 @Data
+@ApiModel(value = "Result", description = "返回说明")
 public class Result {
 
     @ApiModelProperty(value = "是否成功")
@@ -24,11 +28,9 @@ public class Result {
     private String message;
 
     @ApiModelProperty(value = "返回数据")
-    private Map<String, Object> data = new HashMap<String, Object>();
+    private Object data;
 
-    private Result(){};
-
-    public static Result ok(){
+    public static Result ok() {
         Result result = new Result();
         result.setSuccess(true);
         result.setCode(ResultCode.SUCCESS);
@@ -37,7 +39,7 @@ public class Result {
     }
 
 
-    public static Result error(){
+    public static Result error() {
         Result result = new Result();
         result.setSuccess(false);
         result.setCode(ResultCode.ERROR);
@@ -50,28 +52,57 @@ public class Result {
      * @param success
      * @return 使用this从而达到连式编程
      */
-    public Result success(Boolean success){
+    public Result success(Boolean success) {
         this.setSuccess(success);
         return this;
     }
 
-    public Result message(String message){
+    public Result message(String message) {
         this.setMessage(message);
         return this;
     }
 
-    public Result code(Integer code){
+    public Result code(Integer code) {
         this.setCode(code);
         return this;
     }
 
 
-    public Result data(String key, Object value){
-        this.data.put(key,value);
+    /**
+     * 普通成功返回
+     *
+     * @param data 获取的数据
+     */
+    public Result success(String message, Object data) {
+        this.code = ResultCode.SUCCESS;
+        this.message = message;
+        this.data = data;
+        this.success = true;
         return this;
     }
 
-    public Result data(Map<String,Object> map){
+    /**
+     * 返回分页成功数据
+     *
+     * @param data
+     * @return
+     */
+    public Result pageSuccess(List data) {
+        PageInfo pageInfo = new PageInfo(data);
+        Map<String, Object> result = new HashMap<>();
+        result.put("pageSize", pageInfo.getPageSize());
+        result.put("totalPage", pageInfo.getPages());
+        result.put("total", pageInfo.getTotal());
+        result.put("pageNum", pageInfo.getPageNum());
+        result.put("list", pageInfo.getList());
+        this.code = ResultCode.SUCCESS;
+        this.message = "操作成功";
+        this.data = result;
+        this.success = true;
+        return this;
+    }
+
+    public Result data(Map<String, Object> map) {
         this.setData(map);
         return this;
     }

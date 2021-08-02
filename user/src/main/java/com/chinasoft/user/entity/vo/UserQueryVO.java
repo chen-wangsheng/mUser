@@ -24,4 +24,10 @@ public class UserQueryVO implements Serializable {
     @ApiModelProperty(value = "性别(F女、M男、N未知)")
     private String gender;
 
+    @ApiModelProperty(value = "登录时间")
+    private String begin;
+
+    @ApiModelProperty(value = "退出时间")
+    private String end;
+
 }

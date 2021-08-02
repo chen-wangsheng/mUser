@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @Author: VanceChen
  * @Date: 2021/7/30 11:05
@@ -31,24 +34,28 @@ public class IndexController {
     @ApiOperation("用户登录接口")
     @PostMapping("/login")
     public Result login() {
-        return Result.ok().data("token", "admin");
+        return new Result().success("token", "admin");
     }
 
     @ApiOperation("用户登录信息")
     @GetMapping("/info")
     public Result info() {
-        return Result.ok().data("roles", "[admin]").data("name","admin").data("avatar","http://t14.baidu.com/it/u=119284402,3289437878&fm=224&app=112&f=JPEG?w=500&h=500&s=59243D720D1073C412C891C70000B0A1");
+        Map<String, Object> result = new HashMap<>();
+        result.put("roles", "[admin]");
+        result.put("name","admin");
+        result.put("avatar","http://t14.baidu.com/it/u=119284402,3289437878&fm=224&app=112&f=JPEG?w=500&h=500&s=59243D720D1073C412C891C70000B0A1");
+        return new Result().success("roles", result);
     }
 
     @ApiOperation("用户注册接口")
     @PostMapping("/regist")
     public Result regist(@RequestBody User user) {
-        return Result.ok().data("token", null);
+        return new Result().success("token", null);
     }
 
     @ApiOperation("用户注销接口")
     @PostMapping("/logout")
     public Result logout(@RequestBody User user) {
-        return Result.ok().data("token", null);
+        return new Result().success("token", null);
     }
 }

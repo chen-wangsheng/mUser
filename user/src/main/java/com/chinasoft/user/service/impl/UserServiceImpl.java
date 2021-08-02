@@ -1,20 +1,18 @@
 package com.chinasoft.user.service.impl;
 
-import com.chinasoft.user.entity.dto.UserDTO;
 import com.chinasoft.common.utils.Result;
-import com.chinasoft.user.entity.vo.UserQueryVO;
-import com.chinasoft.user.entity.vo.UserUpdateVO;
 import com.chinasoft.user.dao.UserDao;
 import com.chinasoft.user.entity.User;
+import com.chinasoft.user.entity.dto.UserDTO;
+import com.chinasoft.user.entity.vo.UserQueryVO;
+import com.chinasoft.user.entity.vo.UserUpdateVO;
 import com.chinasoft.user.service.UserService;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -51,7 +49,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result getUserInfo(Integer userId) {
         User user = userDao.selectByPrimaryKey(userId);
-        return Result.ok().data("item", user);
+        return new Result().success("item", user);
     }
 
     /**
@@ -80,7 +78,6 @@ public class UserServiceImpl implements UserService {
         // 分页查询用户列表
         PageHelper.startPage(pageNum,pageSize);
         List<UserDTO> users = userDao.getUserPageList(userQueryVO);
-        PageInfo<UserDTO> userPageInfo = new PageInfo<>(users);
-        return Result.ok().data("items", userPageInfo);
+        return new Result().pageSuccess(users);
     }
 }
