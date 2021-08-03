@@ -1,6 +1,7 @@
 package com.chinasoft.user.controller;
 
 import com.chinasoft.common.utils.Result;
+import com.chinasoft.user.entity.dto.UserInfoDTO;
 import com.chinasoft.user.entity.vo.UserQueryVO;
 import com.chinasoft.user.entity.vo.UserUpdateVO;
 import com.chinasoft.user.service.UserService;
@@ -67,5 +68,13 @@ public class UserController {
             @RequestBody UserQueryVO userQueryVO) {
         Result list = userService.getUserPageList(pageNum, pageSize, userQueryVO);
         return list;
+    }
+
+    @ApiOperation("获取用户登录信息")
+    @ApiParam(name = "mobile", value = "用户id", required = true)
+    @GetMapping("/getUserLoginInfo/{mobile}")
+    public Result getUserLoginInfo(@PathVariable("mobile") String mobile) {
+        UserInfoDTO userLoginInfo = userService.getUserLoginInfo(mobile);
+        return new Result().success("userInfo",userLoginInfo);
     }
 }

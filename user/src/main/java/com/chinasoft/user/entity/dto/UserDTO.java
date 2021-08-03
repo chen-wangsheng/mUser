@@ -3,6 +3,7 @@ package com.chinasoft.user.entity.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Id;
 import java.io.Serializable;
@@ -41,6 +42,7 @@ public class UserDTO implements Serializable {
     private String nickname;
 
     @ApiModelProperty(value = "出生日期")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date birthday;
 
     @ApiModelProperty(value = "头像")

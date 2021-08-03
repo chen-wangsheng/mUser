@@ -30,7 +30,7 @@
             last_login_eqpt,
             last_failed_times,
             nickname,
-            birthday,
+            DATE_FORMAT(birthday,'%Y-%m-%d') as birthday,
             head_img,
             gender,
             `status`
@@ -46,7 +46,22 @@
             <if test="gender != null and gender != ''">
                 and gender = #{gender}
             </if>
+            <if test="begin != null and end != null">
+                and last_login_time BETWEEN #{begin} and #{end}
+            </if>
         </where>
+    </select>
+    <select id="getUserLoginInfo" resultType="com.chinasoft.user.entity.dto.UserInfoDTO">
+        SELECT
+            id,
+            mobile,
+            nickname,
+            head_img
+        FROM
+            t_user
+        WHERE
+            mobile = #{mobile}
+        limit 1
     </select>
 
 </mapper>
