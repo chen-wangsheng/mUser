@@ -56,7 +56,10 @@
             id,
             mobile,
             nickname,
-            head_img
+            head_img,
+            gender,
+            birthday,
+            status
         FROM
             t_user
         WHERE

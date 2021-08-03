@@ -40,5 +40,8 @@ public class UserUpdateVO implements Serializable {
     @ApiModelProperty(value = "性别(F女、M男、N未知)")
     private String gender;
 
+    @ApiModelProperty(value = "状态（VALID/FROZEN/DEL)")
+    private String status;
+
 
 }

@@ -18,6 +18,11 @@ spring:
       url: jdbc:mysql://localhost:3306/db_hello?characterEncoding=utf-8&useSSL=false
       username: root
       password: root
+  redis:
+    database: 0
+    host: 101.34.84.24
+    port: 6379
+    password: vanceChen
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml

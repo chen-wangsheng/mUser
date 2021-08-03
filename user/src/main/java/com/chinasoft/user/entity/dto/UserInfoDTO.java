@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.persistence.Id;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @Author: VanceChen
@@ -17,7 +18,7 @@ import java.io.Serializable;
 public class UserInfoDTO implements Serializable {
 
     @ApiModelProperty(value = "用户id")
-    private Integer memberId;
+    private Integer id;
 
     @ApiModelProperty(value = "昵称")
     private String nickname;
@@ -27,5 +28,20 @@ public class UserInfoDTO implements Serializable {
 
     @ApiModelProperty(value = "头像")
     private String headImg;
+
+    @ApiModelProperty(value = "出生日期")
+    private Date birthday;
+
+    @ApiModelProperty(value = "性别(F女、M男、N未知)")
+    private String gender;
+
+    @ApiModelProperty(value = "状态（VALID/FROZEN/DEL)")
+    private String status;
+
+    @ApiModelProperty(value = "最后登录IP")
+    private String lastLoginIp;
+
+    @ApiModelProperty(value = "最后登录设备")
+    private String lastLoginEqpt;
 
 }

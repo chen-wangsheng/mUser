@@ -22,7 +22,7 @@ public class JwtUtils {
 
     public static final String APP_SECRET = "ukc8BDbRigUDaY6pZFfWus2jZWLPHO";
 
-    public static String getJwtToken(String id, String nickname) {
+    public static String getJwtToken(String mobile, String nickname) {
 
         String JwtToken = Jwts.builder()
                 .setHeaderParam("typ", "JWT")
@@ -30,7 +30,7 @@ public class JwtUtils {
                 .setSubject("mUser-Token")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRE))
-                .claim("id", id)
+                .claim("mobile", mobile)
                 .claim("nickname", nickname)
                 .signWith(SignatureAlgorithm.HS256, APP_SECRET)
                 .compact();
@@ -89,6 +89,6 @@ public class JwtUtils {
         }
         Jws<Claims> claimsJws = Jwts.parser().setSigningKey(APP_SECRET).parseClaimsJws(jwtToken);
         Claims claims = claimsJws.getBody();
-        return (String) claims.get("id");
+        return (String) claims.get("mobile");
     }
 }

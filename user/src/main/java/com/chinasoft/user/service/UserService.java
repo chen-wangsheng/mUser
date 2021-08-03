@@ -6,6 +6,8 @@ import com.chinasoft.user.entity.vo.RegisterVO;
 import com.chinasoft.user.entity.vo.UserQueryVO;
 import com.chinasoft.user.entity.vo.UserUpdateVO;
 
+import java.util.Date;
+
 public interface UserService {
 
     /**
@@ -58,4 +60,15 @@ public interface UserService {
      * @param registerVO
      */
     void regist(RegisterVO registerVO);
+
+    /**
+     * 修改设备信息
+     * @param mobile 手机号
+     * @param loginDevice 登录设备
+     * @param ipAddr ip
+     * @param lastFailedTimes 累计失败次数
+     */
+    void updateDeviceInfo(String mobile, String loginDevice, String ipAddr, Date date, int lastFailedTimes);
+
+    void updateById(Integer userId);
 }

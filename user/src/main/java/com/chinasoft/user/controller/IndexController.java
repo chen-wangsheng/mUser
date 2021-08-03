@@ -2,6 +2,8 @@ package com.chinasoft.user.controller;
 
 import com.chinasoft.common.exception.CommonException;
 import com.chinasoft.common.jwt.JwtUtils;
+import com.chinasoft.common.utils.DeviceUtil;
+import com.chinasoft.common.utils.IPUtils;
 import com.chinasoft.common.utils.Result;
 import com.chinasoft.user.entity.User;
 import com.chinasoft.user.entity.dto.UserInfoDTO;
@@ -12,16 +14,20 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mobile.device.Device;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,10 +69,16 @@ public class IndexController {
 
     @ApiOperation(value = "根据token获取登录信息")
     @GetMapping("/getLoginInfo")
-    public Result getLoginInfo(HttpServletRequest request){
+    public Result getLoginInfo(HttpServletRequest request, Device device){
         try {
-            String memberId = JwtUtils.getMemberIdByJwtToken(request);
-            UserInfoDTO userLoginInfo = userService.getUserLoginInfo(memberId);
+            String mobile = JwtUtils.getMemberIdByJwtToken(request);
+            UserInfoDTO userLoginInfo = userService.getUserLoginInfo(mobile);
+            String loginDevice = DeviceUtil.getdevice(device);
+            String ipAddr = IPUtils.getIpAddr(request);
+            userLoginInfo.setLastLoginEqpt(loginDevice);
+            userLoginInfo.setLastLoginIp(ipAddr);
+            userService.updateDeviceInfo(mobile, loginDevice, ipAddr, new Date(), 0);
+
             return Result.ok().success("userInfo", userLoginInfo);
         }catch (Exception e){
             e.printStackTrace();
@@ -82,8 +94,10 @@ public class IndexController {
     }
 
     @ApiOperation("用户注销接口")
-    @PostMapping("/logout")
-    public Result logout(@RequestBody User user) {
-        return new Result().success("token", null);
+    @PutMapping("/logout/{userId}")
+    @ApiParam(name = "userId", value = "用户id", required = true)
+    public Result logout(@PathVariable("userId") Integer userId) {
+        userService.updateById(userId);
+        return Result.ok();
     }
 }
