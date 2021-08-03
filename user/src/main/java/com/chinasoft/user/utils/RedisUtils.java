@@ -1,4 +1,4 @@
-package com.chinasoft.common.utils;
+package com.chinasoft.user.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.DataType;

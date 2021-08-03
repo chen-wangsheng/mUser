@@ -1,18 +1,16 @@
 package com.chinasoft.user.controller;
 
-import com.chinasoft.common.exception.CommonException;
+import com.chinasoft.user.exception.CommonException;
 import com.chinasoft.common.jwt.JwtUtils;
 import com.chinasoft.common.utils.DeviceUtil;
 import com.chinasoft.common.utils.IPUtils;
 import com.chinasoft.common.utils.Result;
-import com.chinasoft.user.entity.User;
+import com.chinasoft.common.utils.StringUtils;
 import com.chinasoft.user.entity.dto.UserInfoDTO;
 import com.chinasoft.user.entity.vo.LoginVO;
 import com.chinasoft.user.entity.vo.RegisterVO;
 import com.chinasoft.user.service.UserService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @Author: VanceChen
@@ -49,6 +45,9 @@ public class IndexController {
     @ApiOperation("用户登录接口")
     @PostMapping("/login")
     public Result login(@RequestBody LoginVO loginVO) {
+        if(StringUtils.isEmpty(loginVO.getMobile()) || StringUtils.isEmpty(loginVO.getPwd())){
+            return Result.error().message("用户名或密码为空");
+        }
         String token = userService.login(loginVO.getMobile(), loginVO.getPwd());
         return new Result().success("token", token);
     }
@@ -99,5 +98,16 @@ public class IndexController {
     public Result logout(@PathVariable("userId") Integer userId) {
         userService.updateById(userId);
         return Result.ok();
+    }
+
+    @ApiOperation("查询用户错误次数")
+    @GetMapping("/getFailedTime/{mobile}")
+    @ApiParam(name = "mobile", value = "手机号", required = true)
+    public Result getFailedTime(@PathVariable("mobile") String mobile) {
+        if(StringUtils.isEmpty(mobile)){
+            return Result.error().message("手机号为空！");
+        }
+        Long count = userService.getFailedTime(mobile);
+        return new Result().success("错误次数", count);
     }
 }

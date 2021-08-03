@@ -77,4 +77,15 @@ public class UserController {
         UserInfoDTO userLoginInfo = userService.getUserLoginInfo(mobile);
         return new Result().success("userInfo",userLoginInfo);
     }
+
+    @ApiOperation("获取用户登录信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "mobile", value = "手机号", required = true,dataType = "String"),
+            @ApiImplicitParam(name = "times", value = "次数", required = true,dataType="int")
+    })
+    @PutMapping("/updateStatus/{mobile}/{times}")
+    public Result updateStatus(@PathVariable("mobile") String mobile, Integer times) {
+        userService.updateStatus(mobile, times);
+        return Result.ok();
+    }
 }

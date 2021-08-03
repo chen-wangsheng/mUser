@@ -1,9 +1,10 @@
 package com.chinasoft.user.service.impl;
 
-import com.chinasoft.common.exception.CommonException;
+import com.chinasoft.user.exception.CommonException;
 import com.chinasoft.common.jwt.JwtUtils;
 import com.chinasoft.common.md5.MD5Utils;
 import com.chinasoft.common.utils.DateUtils;
+import com.chinasoft.user.utils.RedisUtils;
 import com.chinasoft.common.utils.Result;
 import com.chinasoft.common.utils.StringUtils;
 import com.chinasoft.user.dao.UserDao;
@@ -22,8 +23,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: VanceChen
@@ -36,6 +39,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private RedisUtils redisUtils;
 
     /**
      * 删除用户信息
@@ -126,6 +132,10 @@ public class UserServiceImpl implements UserService {
         }
         //校验密码
         if (!MD5Utils.getSaltverifyMD5(password, selectOne.getPwd())) {
+            String key = "user-login-time:" + username;
+            if(!redisUtils.hasKey(key)){
+                redisUtils.setEx("user-login-time:" + username, "0", 1, TimeUnit.DAYS);
+            }
             throw new CommonException(20001, "密码错误");
         }
         String token = JwtUtils.getJwtToken(username, password);
@@ -195,5 +205,42 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setLastLoginTime(new Date());
         userDao.updateByPrimaryKeySelective(user);
+    }
+
+    /**
+     * 查询用户错误次数
+     *
+     * @param mobile
+     * @return
+     */
+    @Override
+    public Long getFailedTime(String mobile) {
+        String key = "user-login-time:" + mobile;
+        if (redisUtils.hasKey(key)) {
+            return redisUtils.incrBy("user-login-time:" + mobile, 1L);
+        }
+        User user = new User();
+        user.setMobile(mobile);
+        User selectOne = userDao.selectOne(user);
+        if (selectOne == null) {
+            throw new RuntimeException("用户不存在");
+        }
+        long count = Long.valueOf(selectOne.getLastFailedTimes());
+        redisUtils.setEx(key, "1", 1, TimeUnit.DAYS);
+        return count;
+    }
+
+    /**
+     * 失败5次锁定账号
+     * @param mobile
+     */
+    @Override
+    public void updateStatus(String mobile, Integer times) {
+        User user = new User();
+        user.setLastFailedTimes(times);
+        user.setStatus("DEL");
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("mobile", mobile);
+        userDao.updateByExampleSelective(user, example);
     }
 }

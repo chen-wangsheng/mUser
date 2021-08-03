@@ -71,4 +71,18 @@ public interface UserService {
     void updateDeviceInfo(String mobile, String loginDevice, String ipAddr, Date date, int lastFailedTimes);
 
     void updateById(Integer userId);
+
+    /**
+     * 查询用户错误次数
+     * @param mobile
+     * @return
+     */
+    Long getFailedTime(String mobile);
+
+    /**
+     * 失败5次锁定账号
+     * @param mobile
+     */
+    void updateStatus(String mobile, Integer times);
+
 }

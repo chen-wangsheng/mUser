@@ -1,4 +1,4 @@
-package com.chinasoft.common.exception;
+package com.chinasoft.user.exception;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -21,11 +21,4 @@ public class CommonException extends RuntimeException {
     @ApiModelProperty(value = "异常码")
     private String msg;
 
-    @Override
-    public String toString() {
-        return "CommonException{" +
-                "message=" + this.getMessage() +
-                ", code=" + code +
-                '}';
-    }
 }
