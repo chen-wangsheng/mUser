@@ -37,6 +37,16 @@ pagehelper:
   supportMethodsArguments: true
   params: count=countSql
 
+
+tencent:
+  secretId: AKIDzrXzDC2g8NOAi27xazBAwWs1xhDUYP2V
+  secretKey: IMCoCPPBi070e4HG0VlmY6ORK1Ujj3HK
+  cos:
+    bucketName: cos-1258886224
+    address: https://cos-1258886224.cos.ap-guangzhou.myqcloud.com
+    region: ap-guangzhou
+
+
 logging:
   level:
     io.swagger.models.parameters.AbstractSerializableParameter: error

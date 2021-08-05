@@ -45,9 +45,9 @@ public class IndexController {
     @ApiOperation("用户登录接口")
     @PostMapping("/login")
     public Result login(@RequestBody LoginVO loginVO) {
-        if(StringUtils.isEmpty(loginVO.getMobile()) || StringUtils.isEmpty(loginVO.getPwd())){
-            return Result.error().message("用户名或密码为空");
-        }
+//        if(StringUtils.isEmpty(loginVO.getMobile()) || StringUtils.isEmpty(loginVO.getPwd())){
+//            return Result.error().message("用户名或密码为空");
+//        }
         String token = userService.login(loginVO.getMobile(), loginVO.getPwd());
         return new Result().success("token", token);
     }

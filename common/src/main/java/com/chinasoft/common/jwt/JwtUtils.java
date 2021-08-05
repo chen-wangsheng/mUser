@@ -77,7 +77,7 @@ public class JwtUtils {
     }
 
     /**
-     * 根据token获取用户id
+     * 根据token获取mobile
      *
      * @param request
      * @return

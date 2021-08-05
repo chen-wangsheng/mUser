@@ -5,7 +5,9 @@ import com.chinasoft.user.entity.dto.UserInfoDTO;
 import com.chinasoft.user.entity.vo.RegisterVO;
 import com.chinasoft.user.entity.vo.UserQueryVO;
 import com.chinasoft.user.entity.vo.UserUpdateVO;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.Date;
 
 public interface UserService {
@@ -85,4 +87,12 @@ public interface UserService {
      */
     void updateStatus(String mobile, Integer times);
 
+    /**
+     * 文件上传
+     * @param file
+     * @return
+     */
+    String fileUpload(MultipartFile file);
+
+    void updateFrozen(Integer id, String status);
 }

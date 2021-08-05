@@ -51,6 +51,9 @@ public class UserDTO implements Serializable {
     @ApiModelProperty(value = "性别(F女、M男、N未知)")
     private String gender;
 
+    @ApiModelProperty(value = "创建人")
+    private Integer createBy;
+
     @ApiModelProperty(value = "状态（VALID/FROZEN/DEL)")
     private String status;
 

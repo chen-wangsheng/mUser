@@ -33,15 +33,16 @@
             DATE_FORMAT(birthday,'%Y-%m-%d') as birthday,
             head_img,
             gender,
+            create_by,
             `status`
         FROM
             t_user
         <where>
             <if test="mobile != null">
-                and mobile = #{mobile}
+                and mobile like concat('%',#{mobile},'%')
             </if>
             <if test="nickname != null and nickname != ''">
-                and nickname = #{nickname}
+                and nickname like concat('%',#{nickname},'%')
             </if>
             <if test="gender != null and gender != ''">
                 and gender = #{gender}

@@ -1,10 +1,8 @@
 package com.chinasoft.user.service.impl;
 
-import com.chinasoft.user.exception.CommonException;
 import com.chinasoft.common.jwt.JwtUtils;
 import com.chinasoft.common.md5.MD5Utils;
 import com.chinasoft.common.utils.DateUtils;
-import com.chinasoft.user.utils.RedisUtils;
 import com.chinasoft.common.utils.Result;
 import com.chinasoft.common.utils.StringUtils;
 import com.chinasoft.user.dao.UserDao;
@@ -14,18 +12,24 @@ import com.chinasoft.user.entity.dto.UserInfoDTO;
 import com.chinasoft.user.entity.vo.RegisterVO;
 import com.chinasoft.user.entity.vo.UserQueryVO;
 import com.chinasoft.user.entity.vo.UserUpdateVO;
+import com.chinasoft.user.exception.CommonException;
 import com.chinasoft.user.service.UserService;
+import com.chinasoft.user.utils.RedisUtils;
+import com.chinasoft.user.utils.TencentCOSClient;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
-import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -121,7 +125,7 @@ public class UserServiceImpl implements UserService {
     public String login(String username, String password) {
         //校验参数
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
-            throw new CommonException(20001, "用户名或密码为空");
+            throw new CommonException(20001,"用户名或密码为空");
         }
         //获取会员
         User user = new User();
@@ -130,15 +134,21 @@ public class UserServiceImpl implements UserService {
         if (selectOne == null) {
             throw new CommonException(20001, "用户不存在");
         }
+        if("FROZEN".equals(selectOne.getStatus()) || "DEL".equals(selectOne.getStatus())){
+            throw new CommonException(20001, "用户已冻结或删除,请联系管理员！");
+        }
         //校验密码
+        String key = "user-login-time:" + username;
         if (!MD5Utils.getSaltverifyMD5(password, selectOne.getPwd())) {
-            String key = "user-login-time:" + username;
             if(!redisUtils.hasKey(key)){
                 redisUtils.setEx("user-login-time:" + username, "0", 1, TimeUnit.DAYS);
             }
             throw new CommonException(20001, "密码错误");
         }
         String token = JwtUtils.getJwtToken(username, password);
+        if(redisUtils.hasKey(key)) {
+            redisUtils.delete(key);
+        }
         return token;
     }
 
@@ -169,6 +179,7 @@ public class UserServiceImpl implements UserService {
         user.setPwd(MD5Utils.getSaltMD5(registerVO.getPwd()));
         user.setStatus("VALID");
         user.setLastFailedTimes(0);
+        user.setHeadImg("https://cos-1258886224.cos.ap-guangzhou.myqcloud.com/avatar/default.jpg");
         user.setCreateBy(-1);
         user.setCreateTime(new Date());
         int insert = userDao.insert(user);
@@ -238,9 +249,64 @@ public class UserServiceImpl implements UserService {
     public void updateStatus(String mobile, Integer times) {
         User user = new User();
         user.setLastFailedTimes(times);
-        user.setStatus("DEL");
+        user.setStatus("FROZEN");
         Example example = new Example(User.class);
         example.createCriteria().andEqualTo("mobile", mobile);
         userDao.updateByExampleSelective(user, example);
+    }
+
+    /**
+     * 文件上传
+     * @param file
+     * @return
+     */
+    @Override
+    public String fileUpload(MultipartFile file) {
+
+        // https://cos-1258886224.cos.ap-guangzhou.myqcloud.com/avatar/default.jpg
+
+        // https://cos-1258886224.cos.
+
+        String fileUrl = TencentCOSClient.putFile(file);
+
+        return fileUrl;
+       /*if (file.isEmpty()) {
+            return "文件为空";
+        }
+        // 获取文件名
+        String fileName = file.getOriginalFilename();
+
+        // 获取文件的后缀名
+        String suffixName = fileName.substring(fileName.lastIndexOf("."));
+        log.debug("上传的后缀名为：" + suffixName);
+        // 文件上传后的路径
+//        String filePath = "G://upload//";
+        String fileUUIDName = UUID.randomUUID().toString();
+        StringBuilder sb = new StringBuilder("G://upload//");
+        String url = sb.append(fileUUIDName).append(fileName).toString();
+        File dest = new File(url);
+        // 检测是否存在目录
+        if (!dest.getParentFile().exists()) {
+            dest.getParentFile().mkdirs();
+        }
+        try {
+            file.transferTo(dest);
+            return url;
+        } catch (IllegalStateException e) {
+            log.error("文件信息错误", e);
+            e.printStackTrace();
+        } catch (IOException e) {
+            log.error("上传失败！", e);
+        }
+        return "上传失败";*/
+    }
+
+    @Override
+    public void updateFrozen(Integer id, String status) {
+        User user = new User();
+        user.setId(id);
+        user.setStatus(status);
+        user.setUpdateTime(new Date());
+        userDao.updateByPrimaryKeySelective(user);
     }
 }

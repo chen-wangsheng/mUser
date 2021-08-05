@@ -19,7 +19,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 
 /**
  * @Author: VanceChen
@@ -78,14 +82,33 @@ public class UserController {
         return new Result().success("userInfo",userLoginInfo);
     }
 
-    @ApiOperation("获取用户登录信息")
+    @ApiOperation("修改用户状态")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mobile", value = "手机号", required = true,dataType = "String"),
             @ApiImplicitParam(name = "times", value = "次数", required = true,dataType="int")
     })
     @PutMapping("/updateStatus/{mobile}/{times}")
-    public Result updateStatus(@PathVariable("mobile") String mobile, Integer times) {
+    public Result updateStatus(@PathVariable("mobile") String mobile,@PathVariable("times") Integer times) {
         userService.updateStatus(mobile, times);
+        return Result.ok();
+    }
+
+    @ApiOperation("上传头像")
+    @ApiParam(name = "file", value = "文件", required = true)
+    @PostMapping("/fileUpload")
+    public Result fileUpload(MultipartFile file) {
+        String upload = userService.fileUpload(file);
+        return new Result().success("图片路径", upload);
+    }
+
+    @ApiOperation("解冻用户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "mobile", value = "手机号", required = true,dataType = "String"),
+            @ApiImplicitParam(name = "status", value = "次数", required = true,dataType="String")
+    })
+    @PutMapping("/updateFrozen/{id}/{status}")
+    public Result updateFrozen(@PathVariable("id") Integer id,@PathVariable("status") String status) {
+        userService.updateFrozen(id, status);
         return Result.ok();
     }
 }
