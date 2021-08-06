@@ -22,14 +22,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -309,4 +307,22 @@ public class UserServiceImpl implements UserService {
         user.setUpdateTime(new Date());
         userDao.updateByPrimaryKeySelective(user);
     }
+
+    @Override
+    public void save(User addUser) {
+        userDao.insert(addUser);
+    }
+
+    @Override
+    public boolean exitUser(String mobile) {
+        User user = new User();
+        user.setMobile(mobile);
+        List<User> list = userDao.select(user);
+        if(CollectionUtils.isEmpty(list)){
+            return false;
+        }
+        return true;
+    }
+
+
 }

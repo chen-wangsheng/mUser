@@ -1,6 +1,7 @@
 package com.chinasoft.user.service;
 
 import com.chinasoft.common.utils.Result;
+import com.chinasoft.user.entity.User;
 import com.chinasoft.user.entity.dto.UserInfoDTO;
 import com.chinasoft.user.entity.vo.RegisterVO;
 import com.chinasoft.user.entity.vo.UserQueryVO;
@@ -95,4 +96,8 @@ public interface UserService {
     String fileUpload(MultipartFile file);
 
     void updateFrozen(Integer id, String status);
+
+    void save(User addUser);
+
+    boolean exitUser(String mobile);
 }

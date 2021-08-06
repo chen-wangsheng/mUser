@@ -15,7 +15,7 @@ import java.util.Date;
  * @Description: TODO
  **/
 @Data
-@ApiModel(value="EduVideo对象", description="课程视频")
+@ApiModel(value="EduVideo对象", description="user")
 public class UserDTO implements Serializable {
 
     private static final long serialVersionUID = 4738405251460060638L;

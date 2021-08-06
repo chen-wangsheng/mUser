@@ -1,9 +1,12 @@
 package com.chinasoft.user.controller;
 
+import com.alibaba.excel.EasyExcel;
 import com.chinasoft.common.utils.Result;
+import com.chinasoft.user.entity.dto.UserData;
 import com.chinasoft.user.entity.dto.UserInfoDTO;
 import com.chinasoft.user.entity.vo.UserQueryVO;
 import com.chinasoft.user.entity.vo.UserUpdateVO;
+import com.chinasoft.user.listener.UserExcelListener;
 import com.chinasoft.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -19,11 +22,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @Author: VanceChen
@@ -109,6 +113,26 @@ public class UserController {
     @PutMapping("/updateFrozen/{id}/{status}")
     public Result updateFrozen(@PathVariable("id") Integer id,@PathVariable("status") String status) {
         userService.updateFrozen(id, status);
+        return Result.ok();
+    }
+
+    @ApiOperation(value = "Excel批量导入用户信息")
+    @ApiParam(name = "file", value = "文件", required = true)
+    @PostMapping("/importUser")
+    public Result importUser(MultipartFile file) {
+        try {
+            //1 获取文件输入流
+            InputStream inputStream = file.getInputStream();
+
+            // 这里 需要指定读用哪个class去读，然后读取第一个sheet 文件流会自动关闭
+            EasyExcel.read(inputStream, UserData.class, new UserExcelListener(userService)).sheet().doRead();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return Result.error().message("添加失败");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Result.error().message("文件错误");
+        }
         return Result.ok();
     }
 }
